@@ -10,6 +10,9 @@ blog_posts = Blueprint('blog_posts', __name__)
 @blog_posts.route('/create',methods = ['GET','POST'])
 @login_required
 def create_post():
+    '''
+    Create the post if the user submit the form
+    '''
     form = BlogPostForm()
 
     if form.validate_on_submit():
@@ -24,6 +27,9 @@ def create_post():
 # Show BLOG POST
 @blog_posts.route('/<int:blog_post_id>') # make sure the id is integer instead of string. So when we query the blogpost from database, the method will not get confused
 def blog_post(blog_post_id):
+    '''
+    render the blog post on the browser
+    '''
     blog_post = BlogPost.query.get_or_404(blog_post_id) 
     return render_template('blog_post.html', title=blog_post.title, date =blog_post.date, post=blog_post)
 
@@ -31,6 +37,10 @@ def blog_post(blog_post_id):
 @blog_posts.route('/<int:blog_post_id>/update', methods=['GET','POST'])
 @login_required
 def update(blog_post_id):
+    '''
+    If the user click the update btn of his post, pre-filled the blog data with the form
+    if the user update the form, then commit the post and redirect to the blog_post method
+    '''
     # make sure the author is the current user, so only author could update the post
     blog_post = BlogPost.query.get_or_404(blog_post_id)
     if blog_post.author != current_user:
@@ -55,6 +65,9 @@ def update(blog_post_id):
 @blog_posts.route('/<int:blog_post_id>/delete', methods=['GET','POST'])
 @login_required
 def delete_post(blog_post_id):
+    '''
+    Delete the user's own post
+    '''
     blog_post = BlogPost.query.get_or_404(blog_post_id)
     if blog_post.author != current_user:
         abort(403)
