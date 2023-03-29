@@ -10,6 +10,9 @@ users = Blueprint('users', __name__)
 # register
 @users.route('/register', methods=['GET','POST']) # since we are using forms, we need to add methods
 def register():
+    '''
+    register the user and redirect him back to the login page
+    '''
     form = RegistrationForm()
 
     if form.validate_on_submit():
@@ -24,7 +27,10 @@ def register():
 # login
 @users.route('/login', methods=['GET','POST'])
 def login():
-
+    '''
+    Query the user from the database based on their email
+    Then verify the user password. If success, we login the user and redirect him to the home page or the url he wants to go 
+    '''
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -43,6 +49,9 @@ def login():
 # logout
 @users.route('/logout')
 def logout():
+    '''
+    Log out the user and redirect back to home page
+    '''
     logout_user()
     return redirect(url_for('core.index')) # we can't just call index since we are using blueprint
 
@@ -50,7 +59,10 @@ def logout():
 @users.route('/account', methods=['GET','POST'])
 @login_required
 def account():
-
+    '''
+    Pre-filled the user account info and profile image
+    Update the info if the user update the form
+    '''
     form = UpdateUserForm()
     if form.validate_on_submit():
         # if user upload the data
@@ -76,6 +88,9 @@ def account():
 # user's list of Blog posts
 @users.route('/<username>') #username will change
 def user_posts(username):
+    '''
+    Show all the posts from the current user
+    '''
     page = request.args.get('page',1,type=int) # cycle thorugh user posts using pages
     user = User.query.filter_by(username=username).first_or_404() # grab the user if user exist or return 404 error
 
